@@ -23,7 +23,7 @@ export const GameProvider = ({ children }) => {
 
     useEffect(() => {
         const URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-        const newSocket = io(URL, { transfusion: ['websocket'] });
+        const newSocket = io(URL, { transports: ['websocket'] });
         setSocket(newSocket);
 
         // --- Room Management ---

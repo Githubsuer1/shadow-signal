@@ -12,7 +12,7 @@ dotenv.config();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: '*',
+    origin: 'https://shadow-signal-lnwc.onrender.com',
     methods: ['GET', 'POST'],
     }
 });

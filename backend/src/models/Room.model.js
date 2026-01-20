@@ -7,6 +7,7 @@ const PlayerSchema = new mongoose.Schema({
   word: String,
   isHost: { type: Boolean, default: false },
   isAlive: { type: Boolean, default: true },
+  clue: { type: String, default: "" },
   votesReceived: { type: Number, default: 0 }, // How many people voted for this player
   votedFor: { type: String, default: null }    // The socketId of who this player picked
 });

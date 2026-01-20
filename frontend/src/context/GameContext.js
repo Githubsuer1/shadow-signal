@@ -13,7 +13,7 @@ export const GameProvider = ({ children }) => {
         players: [],
         myRole: '',
         myWord: '',
-        status: 'LOBBY', 
+        status: 'LOBBY',
         activePlayerId: '',
         timeLeft: 30,
         gameMode: 'INFILTRATOR',
@@ -43,13 +43,13 @@ export const GameProvider = ({ children }) => {
 
         // --- Game Logic ---
         newSocket.on("gameStarted", (data) => {
-            setGameState(prev => ({ 
-                ...prev, 
-                myRole: data.role, 
-                myWord: data.word, 
+            setGameState(prev => ({
+                ...prev,
+                myRole: data.role,
+                myWord: data.word,
                 players: data.players,
                 status: 'PLAYING',
-                winner: null 
+                winner: null
             }));
         });
 
@@ -61,16 +61,40 @@ export const GameProvider = ({ children }) => {
             setGameState(prev => ({ ...prev, activePlayerId: data.activePlayerId, timeLeft: data.timeLeft }));
         });
 
-        newSocket.on("phaseChange", ({ status }) => {
-            setGameState(prev => ({ ...prev, status }));
+        // Listen for real-time clue updates from any player
+        newSocket.on("clueUpdated", ({ socketId, clue }) => {
+            setGameState(prev => ({
+                ...prev,
+                players: prev.players.map(p =>
+                    p.socketId === socketId ? { ...p, clue } : p
+                )
+            }));
+        });
+
+        // When a round ends, the backend sends updated player list (clues cleared)
+        newSocket.on("roundResult", (data) => {
+            setGameState(prev => ({
+                ...prev,
+                players: data.players,
+                status: 'PLAYING' // Backend transitions back to playing
+            }));
+        });
+
+        // Ensure phase changes (like moving to voting) sync the latest player data
+        newSocket.on("phaseChange", (data) => {
+            setGameState(prev => ({
+                ...prev,
+                status: data.status,
+                players: data.players || prev.players // Sync final clues for voting
+            }));
         });
 
         newSocket.on("gameOver", (data) => {
-            setGameState(prev => ({ 
-                ...prev, 
-                status: 'FINISHED', 
+            setGameState(prev => ({
+                ...prev,
+                status: 'FINISHED',
                 winner: data.winner,
-                eliminatedPlayer: data.eliminated 
+                eliminatedPlayer: data.eliminated
             }));
         });
 

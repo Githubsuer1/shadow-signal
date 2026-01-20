@@ -9,7 +9,10 @@ import { setupGameHandlers, activeTimers } from './src/sockets/Game.handlers.js'
 
 dotenv.config();
 
+// 1. creating the server
 const httpServer = http.createServer(app);
+
+// 2. creating the instance 
 const io = new Server(httpServer, {
   cors: {
     origin: 'https://shadow-signal-lnwc.onrender.com',
@@ -17,6 +20,7 @@ const io = new Server(httpServer, {
     }
 });
 
+// 3. socket connection to the server
 io.on('connection', (socket) => {
   console.log('Socket connected:', socket.id);
 

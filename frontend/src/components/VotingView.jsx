@@ -12,41 +12,45 @@ export default function VotingView() {
     setHasVoted(true);
   };
 
-  // We don't want to vote for ourselves or dead players
-  const candidates = gameState.players.filter(p => p.socketId !== socket?.id);
+  // Only vote for other living players
+  const candidates = gameState.players.filter(p => p.socketId !== socket?.id && p.isAlive);
 
   return (
     <div className="p-6 max-w-md mx-auto flex flex-col items-center justify-center min-h-screen">
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-black text-red-500 uppercase italic">Identify the Threat</h1>
-        <p className="text-slate-400 mt-2">Cast your vote to eliminate the outsider.</p>
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-black text-red-500 uppercase italic">Cast Your Vote</h1>
+        <p className="text-slate-400 mt-2">Analyze the clues. Who is the outsider?</p>
       </div>
 
-      <div className="w-full space-y-4">
+      <div className="w-full space-y-3">
         {candidates.map((player) => (
           <button
             key={player.socketId}
             onClick={() => handleVote(player.socketId)}
             disabled={hasVoted}
-            className={`w-full p-5 rounded-2xl border-2 flex items-center justify-between transition-all ${
+            className={`w-full p-4 rounded-2xl border-2 text-left transition-all ${
               hasVoted 
-                ? 'bg-slate-800 border-slate-700 opacity-50 grayscale' 
-                : 'bg-slate-800 border-slate-700 hover:border-red-500 hover:bg-slate-700 active:scale-95'
+                ? 'bg-slate-800/50 border-slate-700 opacity-50' 
+                : 'bg-slate-800 border-slate-700 hover:border-red-500 hover:scale-[1.02]'
             }`}
           >
-            <span className="text-xl font-bold">{player.name}</span>
-            <div className="w-8 h-8 rounded-full border border-slate-500 flex items-center justify-center text-xs">
-               VOTE
+            <div className="flex justify-between items-center">
+                <div>
+                    <span className="block text-sm text-slate-500 font-bold uppercase tracking-widest">Suspect</span>
+                    <span className="text-xl font-black text-white">{player.name}</span>
+                </div>
+                {/* 🆕 CLUE PREVIEW: Shows the player's clue as evidence during voting */}
+                <div className="bg-black/30 px-3 py-1 rounded-lg border border-white/5">
+                    <span className="text-xs text-indigo-400 font-mono italic">"{player.clue || 'No clue'}"</span>
+                </div>
             </div>
           </button>
         ))}
       </div>
 
       {hasVoted && (
-        <div className="mt-10 p-4 bg-indigo-600/20 border border-indigo-500/50 rounded-xl animate-pulse">
-          <p className="text-indigo-400 font-bold text-center">
-            Signal Transmitted. Awaiting others...
-          </p>
+        <div className="mt-8 text-center p-4 rounded-2xl border border-indigo-500/30 bg-indigo-500/10">
+          <p className="text-indigo-400 font-black animate-pulse">VOTE RECORDED. AWAITING RESULTS...</p>
         </div>
       )}
     </div>

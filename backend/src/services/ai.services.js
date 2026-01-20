@@ -4,7 +4,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export const getSpyWord = async (commonWord, category) => {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const prompt = `Act as a game designer for a social deduction game. 
         The category is "${category}" and the main word is "${commonWord}". 
         Provide ONE word for a "Spy" player that is highly similar but distinct. 
